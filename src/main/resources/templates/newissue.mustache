@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>New issue</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="#">Issue Tracker</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar1"
+            aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbar1">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="/issues">Issues</a>
+            </li>
+        </ul>
+        <form action="/logout" method="post" class="form-inline">
+            <input type="submit" class="btn btn-outline-info" value="Log out">
+        </form>
+    </div>
+</nav>
+<div class="container mt-3">
+    <form action="/issues" method="post" id="form">
+        <div class="form-group row align-items-center">
+            <label for="name" class="col-1">Name: </label>
+            <div class="col-11">
+                <input type="text" class="form-control" id="name" name="name" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="description">Description: </label>
+            <textarea class="form-control" id="description" style="resize: none" rows="5" name="description" required></textarea>
+            <small class="form-text text-muted">Author: {{login}}</small>
+        </div>
+        <div class="form-group row">
+            <div class="col-6 text-left">
+                <input type="submit" class="btn btn-success" value="Create issue">
+            </div>
+            <div class="col-6 text-right">
+                <input type="reset" class="btn btn-warning" value="Clear form">
+            </div>
+        </div>
+    </form>
+    <p class="checkbox" id="resp"></p>
+</div>
+</body>
+<script>
+    $(function () {
+        $('#form').submit(function (e) {
+            var $form = $(this);
+            $.ajax({
+                type: $form.attr('method'),
+                url: $form.attr('action'),
+                data: $form.serialize()
+            }).done(function () {
+                $('#resp').css("color", "green").text("Issue created.");
+            }).fail(function () {
+                $('#resp').css("color", "red").text("Issue with name " + $('#name').val() + " already exist.");
+            });
+            e.preventDefault();
+        });
+    });
+    $(".form-control").focus(function () {
+        $('#resp').text("");
+    });
+</script>
+</html>

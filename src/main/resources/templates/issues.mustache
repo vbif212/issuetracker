@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Issues</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="#">Issue Tracker</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar1"
+            aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbar1">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="/issues/new">New issue</a>
+            </li>
+        </ul>
+        <form action="/logout" method="post" class="form-inline">
+            <input type="submit" class="btn btn-outline-info" value="Log out">
+        </form>
+    </div>
+</nav>
+<div class="container mt-3">
+    <div class="list-group">
+        {{#issues}}
+            <a href="issues/{{id}}" class="list-group-item list-group-item-action">
+                <div class="row align-items-center">
+                    <div class="col-6">
+                        {{name}}
+                    </div>
+                    <div class="col-3">
+                        {{status}}
+                    </div>
+                    <div class="col-3">
+                        {{date}}
+                    </div>
+                </div>
+            </a>
+        {{/issues}}
+    </div>
+    <h1 class="display-4 text-center">{{empty}}</h1>
+</div>
+</body>
+
+</html>
