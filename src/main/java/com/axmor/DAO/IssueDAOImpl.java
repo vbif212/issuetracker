@@ -1,56 +1,59 @@
 package com.axmor.DAO;
 
 import com.axmor.Models.Issue;
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.exception.ConstraintViolationException;
 
+import java.sql.SQLException;
 import java.util.List;
 
 public class IssueDAOImpl implements IssueDAO {
 
     SessionFactory sessionFactory;
 
-    public IssueDAOImpl(SessionFactory sessionFactory){
+    public IssueDAOImpl(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
     }
 
     @Override
-    public List<Issue> getAll() {
-        List<Issue> issues;
+    public List<Issue> getAll() throws HibernateException {
         try (Session session = sessionFactory.openSession()) {
-            issues = session.createQuery("FROM Issue ").list();
-            return issues;
+            return session.createQuery("FROM Issue ").list();
         } catch (Exception e) {
-            return null;
+            throw new HibernateException(e);
         }
     }
 
     @Override
-    public Issue getByID(int id) {
-        Issue issue = null;
+    public Issue getByID(int id) throws HibernateException {
         try (Session session = sessionFactory.openSession()) {
-            issue = session.get(Issue.class, id);
-            return issue;
+            return session.get(Issue.class, id);
         } catch (Exception e) {
-            return null;
+            throw new HibernateException(e);
         }
     }
 
     @Override
-    public void delete(Issue issue) {
+    public void delete(Issue issue) throws HibernateException {
         try (Session session = sessionFactory.openSession()) {
             session.beginTransaction();
             session.delete(issue);
             session.getTransaction().commit();
+        } catch (Exception e) {
+            throw new HibernateException(e);
         }
     }
 
     @Override
-    public void merge(Issue issue) {
+    public void merge(Issue issue) throws HibernateException {
         try (Session session = sessionFactory.openSession()) {
             session.beginTransaction();
             session.merge(issue);
             session.getTransaction().commit();
+        } catch (Exception e) {
+            throw new HibernateException(e);
         }
     }
 }

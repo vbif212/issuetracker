@@ -9,6 +9,8 @@ import spark.Request;
 import spark.Response;
 import spark.Route;
 
+import javax.persistence.NoResultException;
+
 /**
  * Controller for handle login/logout request.
  *
@@ -31,15 +33,14 @@ public class LoginController {
         UserDAO userDAO = new UserDAOImpl(sessionFactory);
         String escapedLogin = StringEscapeUtils.escapeHtml4(request.queryParams("username"));
         String escapedPassword = StringEscapeUtils.escapeHtml4(request.queryParams("password"));
-        User user = userDAO.getByLogin(escapedLogin);
-        if (user == null) {
-            user = new User(escapedLogin, escapedPassword);
-            userDAO.add(user);
-        } else {
+        try {
+            User user = userDAO.getByLogin(escapedLogin);
             if (!user.getPassword().equals(escapedPassword)) {
                 response.status(401);
                 return  "";
             }
+        } catch (NoResultException e) {
+            userDAO.add(new User(escapedLogin, escapedPassword));
         }
         request.session(true).attribute("login", escapedLogin);
         return "/issues";

@@ -18,6 +18,7 @@ import spark.template.mustache.MustacheTemplateEngine;
 
 import org.apache.commons.text.StringEscapeUtils;
 
+import javax.persistence.NoResultException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,11 +26,11 @@ import java.util.Map;
 /**
  * Controller for handle request for Issues.
  *
- * @author  Mikhail Sotnikov
+ * @author Mikhail Sotnikov
  */
 public class IssueController {
 
-    private IssueDAO issueDAO ;
+    private IssueDAO issueDAO;
     private UserDAO userDAO;
     private MustacheTemplateEngine mustacheTemplateEngine;
 
@@ -38,7 +39,7 @@ public class IssueController {
      *
      * @param sessionFactory Hibernate.SessionFactory
      */
-    public IssueController(SessionFactory sessionFactory){
+    public IssueController(SessionFactory sessionFactory) {
         issueDAO = new IssueDAOImpl(sessionFactory);
         userDAO = new UserDAOImpl(sessionFactory);
         mustacheTemplateEngine = new MustacheTemplateEngine();
@@ -65,14 +66,18 @@ public class IssueController {
     private Route handleIssuesPost = (Request request, Response response) -> {
         String escapedName = StringEscapeUtils.escapeHtml4(request.queryParams("name"));
         String escapedDescription = StringEscapeUtils.escapeHtml4(request.queryParams("description"));
-        User user = userDAO.getByLogin(request.session().attribute("login"));
-        Issue issue = new Issue(escapedName, escapedDescription);
-        user.getIssues().add(issue);
-        issue.setUser(user);
         try {
-            userDAO.merge(user);
-        } catch (ConstraintViolationException e) {
-            response.status(409);
+            User user = userDAO.getByLogin(request.session().attribute("login"));
+            Issue issue = new Issue(escapedName, escapedDescription);
+            user.getIssues().add(issue);
+            issue.setUser(user);
+            try {
+                userDAO.merge(user);
+            } catch (ConstraintViolationException e) {
+                response.status(409);
+            }
+        } catch (NoResultException e) {
+            response.status(404);
         }
         return "";
     };
@@ -142,6 +147,8 @@ public class IssueController {
             }
         } catch (NumberFormatException e) {
             response.status(400);
+        } catch (NoResultException e) {
+            response.status(404);
         }
         return "";
     };
@@ -204,7 +211,7 @@ public class IssueController {
      * Render and return HTML-page
      *
      * @param model Map where key is name of value on "Mustache" HTML-page
-     * @param path path to the Mustache template.
+     * @param path  path to the Mustache template.
      * @return HTML rendering page in the form of a String
      */
     private String render(Map<String, Object> model, String path) {

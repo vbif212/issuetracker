@@ -2,6 +2,7 @@ package com.axmor.DAO;
 
 import com.axmor.Models.Issue;
 
+import java.sql.SQLException;
 import java.util.List;
 
 /**

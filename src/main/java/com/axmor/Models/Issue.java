@@ -13,6 +13,7 @@ public class Issue {
     @Id
     @GeneratedValue
     private int id;
+    @Column(unique = true)
     private String name;
     private String description;
     private Status status;
