@@ -19,10 +19,10 @@ public class IssueDAOImpl implements IssueDAO {
         List<Issue> issues;
         try (Session session = sessionFactory.openSession()) {
             issues = session.createQuery("FROM Issue ").list();
+            return issues;
         } catch (Exception e) {
             return null;
         }
-        return issues;
     }
 
     @Override
@@ -30,10 +30,10 @@ public class IssueDAOImpl implements IssueDAO {
         Issue issue = null;
         try (Session session = sessionFactory.openSession()) {
             issue = session.get(Issue.class, id);
+            return issue;
         } catch (Exception e) {
             return null;
         }
-        return issue;
     }
 
     @Override

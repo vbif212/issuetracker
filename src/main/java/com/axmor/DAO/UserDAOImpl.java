@@ -26,10 +26,10 @@ public class UserDAOImpl implements UserDAO {
         User user = null;
         try (Session session = sessionFactory.openSession()) {
             user = (User) session.createQuery("FROM User WHERE name = :name").setParameter("name", login).getSingleResult();
+            return user;
         } catch (Exception e) {
             return null;
         }
-        return user;
     }
 
     @Override
