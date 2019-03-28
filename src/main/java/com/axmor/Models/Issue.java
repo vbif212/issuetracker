@@ -18,10 +18,11 @@ public class Issue {
     private String description;
     private Status status;
     private String date;
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("date")
     private Set<Comment> comments;
-    @ManyToOne
-    @JoinColumn(name = "user_id")
+    @ManyToOne()
+    @JoinColumn()
     private User user;
 
     public Issue() {

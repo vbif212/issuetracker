@@ -14,10 +14,7 @@ public class Comment {
     private String text;
     private String date;
     @ManyToOne
-    @JoinColumn(name = "issue_id", nullable = false)
-    private Issue issue;
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(nullable = false)
     private User user;
 
     public Comment() {
@@ -27,14 +24,6 @@ public class Comment {
         this.status = status;
         this.text = text;
         date = new SimpleDateFormat().format(new Date());
-    }
-
-    public Issue getIssue() {
-        return issue;
-    }
-
-    public void setIssue(Issue issue) {
-        this.issue = issue;
     }
 
     public User getUser() {

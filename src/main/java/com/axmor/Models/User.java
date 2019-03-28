@@ -1,5 +1,6 @@
 package com.axmor.Models;
 
+
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Objects;
@@ -14,9 +15,9 @@ public class User {
     @Column(unique = true)
     private String name;
     private String password;
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Comment> comments = new HashSet<>();
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Issue> issues = new HashSet<>();
 
     public User() {

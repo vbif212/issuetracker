@@ -16,8 +16,6 @@ import spark.Response;
 import spark.Route;
 import spark.template.mustache.MustacheTemplateEngine;
 
-import org.apache.commons.text.StringEscapeUtils;
-
 import javax.persistence.NoResultException;
 import java.util.HashMap;
 import java.util.List;
@@ -64,11 +62,11 @@ public class IssueController {
     };
 
     private Route handleIssuesPost = (Request request, Response response) -> {
-        String escapedName = StringEscapeUtils.escapeHtml4(request.queryParams("name"));
-        String escapedDescription = StringEscapeUtils.escapeHtml4(request.queryParams("description"));
+        String name = request.queryParams("name");
+        String description = request.queryParams("description");
         try {
             User user = userDAO.getByLogin(request.session().attribute("login"));
-            Issue issue = new Issue(escapedName, escapedDescription);
+            Issue issue = new Issue(name, description);
             user.getIssues().add(issue);
             issue.setUser(user);
             try {
@@ -84,7 +82,7 @@ public class IssueController {
 
     private Route handleIssuesIDGet = (Request request, Response response) -> {
         try {
-            int id = Integer.parseInt(StringEscapeUtils.escapeHtml4(request.params(":id")));
+            int id = Integer.parseInt(request.params(":id"));
             Issue issue = issueDAO.getByID(id);
             if (issue == null) {
                 response.status(404);
@@ -108,14 +106,17 @@ public class IssueController {
 
     private Route handleIssuesIDDelete = (Request request, Response response) -> {
         try {
-            int id = Integer.parseInt(StringEscapeUtils.escapeHtml4(request.params(":id")));
+            int id = Integer.parseInt(request.params(":id"));
             Issue issue = issueDAO.getByID(id);
             if (issue == null) {
                 response.status(404);
             } else {
                 String login = request.session().attribute("login");
-                if (login.equals(issue.getUser().getName())) {
-                    issueDAO.delete(issue);
+                User user = issue.getUser();
+                if (login.equals(user.getName())) {
+                    user.getComments().removeAll(issue.getComments());
+                    user.getIssues().remove(issue);
+                    userDAO.merge(user);
                 } else {
                     response.status(403);
                 }
@@ -128,19 +129,18 @@ public class IssueController {
 
     private Route handleIssuesIDCommentPost = (Request request, Response response) -> {
         try {
-            int id = Integer.parseInt(StringEscapeUtils.escapeHtml4(request.params(":id")));
+            int id = Integer.parseInt(request.params(":id"));
             Issue issue = issueDAO.getByID(id);
             if (issue == null) {
                 response.status(404);
             } else {
                 User user = userDAO.getByLogin(request.session().attribute("login"));
-                Status escapedStatus = Status.valueOf(StringEscapeUtils.escapeHtml4(request.queryParams("status")));
-                Comment comment = new Comment(escapedStatus, StringEscapeUtils.escapeHtml4(request.queryParams("comment")));
+                Status status = Status.valueOf(request.queryParams("status"));
+                Comment comment = new Comment(status, request.queryParams("comment"));
                 user.getComments().add(comment);
                 issue.getComments().add(comment);
-                comment.setIssue(issue);
                 comment.setUser(user);
-                issue.setStatus(escapedStatus);
+                issue.setStatus(status);
                 userDAO.merge(user);
                 issueDAO.merge(issue);
                 response.redirect("/issues/" + id);

@@ -27,13 +27,6 @@ public interface IssueDAO {
     Issue getByID(int id);
 
     /**
-     * Delete issue by entity
-     *
-     * @param issue for delete
-     */
-    void delete(Issue issue);
-
-    /**
      * Update issue by entity
      *
      * @param issue for update

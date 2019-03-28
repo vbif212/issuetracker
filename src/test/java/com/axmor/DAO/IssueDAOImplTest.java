@@ -72,22 +72,6 @@ public class IssueDAOImplTest {
     }
 
     @Test
-    public void delete() {
-        session = sessionFactory.openSession();
-        Issue i1 = new Issue("i5", "desc");
-        session.beginTransaction();
-        session.save(i1);
-        session.getTransaction().commit();
-        session.close();
-        issueDAO.delete(i1);
-        session = sessionFactory.openSession();
-        session.beginTransaction();
-        Issue i2 = session.get(Issue.class, i1.getId());
-        session.close();
-        assertNull(i2);
-    }
-
-    @Test
     public void merge() {
         session = sessionFactory.openSession();
         Issue i1 = new Issue("i4", "desc");

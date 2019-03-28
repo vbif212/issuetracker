@@ -1,21 +1,13 @@
 package com.axmor;
 
 
-import com.axmor.DAO.IssueDAO;
-import com.axmor.DAO.IssueDAOImpl;
-import com.axmor.DAO.UserDAO;
-import com.axmor.DAO.UserDAOImpl;
-import com.axmor.Models.Issue;
-import com.axmor.Models.User;
 import com.axmor.Util.Filters;
 import com.axmor.Controllers.IndexController;
 import com.axmor.Controllers.IssueController;
 import com.axmor.Controllers.LoginController;
-import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
-import java.util.List;
 
 import static spark.Spark.*;
 

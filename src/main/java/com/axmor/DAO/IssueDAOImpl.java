@@ -4,9 +4,7 @@ import com.axmor.Models.Issue;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.exception.ConstraintViolationException;
 
-import java.sql.SQLException;
 import java.util.List;
 
 public class IssueDAOImpl implements IssueDAO {
@@ -30,17 +28,6 @@ public class IssueDAOImpl implements IssueDAO {
     public Issue getByID(int id) throws HibernateException {
         try (Session session = sessionFactory.openSession()) {
             return session.get(Issue.class, id);
-        } catch (Exception e) {
-            throw new HibernateException(e);
-        }
-    }
-
-    @Override
-    public void delete(Issue issue) throws HibernateException {
-        try (Session session = sessionFactory.openSession()) {
-            session.beginTransaction();
-            session.delete(issue);
-            session.getTransaction().commit();
         } catch (Exception e) {
             throw new HibernateException(e);
         }

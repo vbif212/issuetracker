@@ -3,7 +3,7 @@ package com.axmor.Controllers;
 import com.axmor.Models.User;
 import com.axmor.DAO.UserDAO;
 import com.axmor.DAO.UserDAOImpl;
-import org.apache.commons.text.StringEscapeUtils;
+
 import org.hibernate.SessionFactory;
 import spark.Request;
 import spark.Response;
@@ -31,18 +31,18 @@ public class LoginController {
 
     private Route handleLoginPost = (Request request, Response response) -> {
         UserDAO userDAO = new UserDAOImpl(sessionFactory);
-        String escapedLogin = StringEscapeUtils.escapeHtml4(request.queryParams("username"));
-        String escapedPassword = StringEscapeUtils.escapeHtml4(request.queryParams("password"));
+        String username = request.queryParams("username");
+        String password = request.queryParams("password");
         try {
-            User user = userDAO.getByLogin(escapedLogin);
-            if (!user.getPassword().equals(escapedPassword)) {
+            User user = userDAO.getByLogin(username);
+            if (!user.getPassword().equals(password)) {
                 response.status(401);
                 return  "";
             }
         } catch (NoResultException e) {
-            userDAO.add(new User(escapedLogin, escapedPassword));
+            userDAO.add(new User(username, password));
         }
-        request.session(true).attribute("login", escapedLogin);
+        request.session(true).attribute("login", username);
         return "/issues";
     };
 
